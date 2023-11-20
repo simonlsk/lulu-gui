@@ -2,6 +2,8 @@ import tkinter as tk
 from tkinter import filedialog
 from tkinter import messagebox
 
+from slider import CustomSlider
+
 
 class VideoSectionApp:
     def __init__(self, root):
@@ -33,6 +35,21 @@ class VideoSectionApp:
         add_section_button = tk.Button(input_frame, text="Add section", command=self.add_section)
         add_section_button.pack(side="left", padx=10)
 
+        # Custom Slider Frame
+        self.slider_frame = tk.Frame(self.root)
+        self.slider_frame.pack(fill="x", padx=20, pady=10)
+
+        # Custom Slider
+        self.slider = CustomSlider(self.slider_frame, bg="white")
+        self.slider.pack(fill="x", expand=True)
+
+        # Add buttons for setting start and end points
+        self.set_start_button = tk.Button(self.slider_frame, text="Set Start", command=self.set_start)
+        self.set_start_button.pack(side="left", padx=5)
+
+        self.set_end_button = tk.Button(self.slider_frame, text="Set End", command=self.set_end)
+        self.set_end_button.pack(side="right", padx=5)
+
         # Section List Frame
         section_list_frame = tk.LabelFrame(self.root, text="Sections", padx=10, pady=10)
         section_list_frame.pack(padx=10, pady=5, fill="both", expand=True)
@@ -45,17 +62,17 @@ class VideoSectionApp:
         process_button = tk.Button(self.root, text="Process", command=self.process_sections)
         process_button.pack(pady=5)
 
-        # Section Time Range Frame
-        time_range_frame = tk.LabelFrame(self.root, text="Time Range", padx=10, pady=10)
-        time_range_frame.pack(padx=10, pady=5, fill="x")
+    def set_start(self):
+        # Record the start value from the slider
+        start_timecode = self.slider.get_start_smpte()
+        # You can update the UI or internal state with this value
+        print("Start timecode set to:", start_timecode)
 
-        # Start Time Slider
-        self.start_time_slider = tk.Scale(time_range_frame, from_=0, to=100, orient='horizontal', label='Start Time', length=200)
-        self.start_time_slider.pack(side="left", padx=(0, 10))
-
-        # End Time Slider
-        self.end_time_slider = tk.Scale(time_range_frame, from_=0, to=100, orient='horizontal', label='End Time', length=200)
-        self.end_time_slider.pack(side="left")
+    def set_end(self):
+        # Record the end value from the slider
+        end_timecode = self.slider.get_end_smpte()
+        # You can update the UI or internal state with this value
+        print("End timecode set to:", end_timecode)
 
     def browse_file(self):
         self.video_file = filedialog.askopenfilename(
