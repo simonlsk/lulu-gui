@@ -40,7 +40,7 @@ class VideoSectionApp:
         self.slider_frame.pack(fill="x", padx=20, pady=10)
 
         # Custom Slider
-        self.slider = CustomSlider(self.slider_frame, bg="white")
+        self.slider = CustomSlider(self.slider_frame, 1000, 30)
         self.slider.pack(fill="x", expand=True)
 
         # Add buttons for setting start and end points
@@ -64,13 +64,13 @@ class VideoSectionApp:
 
     def set_start(self):
         # Record the start value from the slider
-        start_timecode = self.slider.get_start_smpte()
+        start_timecode = self.slider.get_smpte()
         # You can update the UI or internal state with this value
         print("Start timecode set to:", start_timecode)
 
     def set_end(self):
         # Record the end value from the slider
-        end_timecode = self.slider.get_end_smpte()
+        end_timecode = self.slider.get_smpte()
         # You can update the UI or internal state with this value
         print("End timecode set to:", end_timecode)
 
