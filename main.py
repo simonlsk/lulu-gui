@@ -133,7 +133,9 @@ class VideoSectionApp:
         if file_path:
             self.file_path_entry.delete(0, tk.END)
             self.file_path_entry.insert(0, file_path)
-            self.load_video(file_path)  # Load the video using the previously defined method
+            # todo: calculate framerate and length
+            self.video_file = file_path
+            # self.load_video(file_path)  # Load the video using the previously defined method
 
     def delete_element(self, arg):
         selected_indices = self.sections_listbox.curselection()
