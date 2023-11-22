@@ -1,0 +1,6 @@
+from a fresh conda environment can't pip install any library because of ssl issues.
+solution: https://stackoverflow.com/a/56934348
+
+
+[] handle multiple click on set end
+[] debounce dragging the slider?
