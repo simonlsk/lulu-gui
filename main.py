@@ -137,14 +137,22 @@ class VideoSectionApp:
         # Create a progress bar
         self.progress_bar = ttk.Progressbar(self.progress_window, mode="determinate")
         self.progress_bar.pack(pady=20)
-
+        section_progress = tk.StringVar()
+        self.progress_label = tk.Label(self.progress_window, textvariable=section_progress)
+        self.progress_label.pack()
         def processing_thread():
-            video_pipeline.run(source=self.video_file,
-                           save_img=True,
-                           frame_callback=self.progress_callback,
-                           dst=self.output_directory,
-                           start_frame=self.sections[0][1][0],
-                           end_frame=self.sections[0][1][1])
+            for i, section in enumerate(self.sections):
+                self.progress_bar["value"] = 0
+                section_progress.set(f"Processing {section[0]}")
+                self.progress_window.update_idletasks()
+                section_progress.set(f"Processing section {i+1} / {len(self.sections)}")
+                video_pipeline.run(source=self.video_file,
+                                   save_img=True,
+                                   frame_callback=self.progress_callback,
+                                   dst=self.output_directory,
+                                   start_frame=section[1][0],
+                                   end_frame=section[1][1])
+
             self.progress_window.destroy()
 
         t = threading.Thread(target=processing_thread)
