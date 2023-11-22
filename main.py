@@ -4,6 +4,7 @@ import cv2
 from PIL import ImageTk, Image
 import video_pipeline
 from slider import CustomSlider
+import threading
 
 
 class VideoSectionApp:
@@ -138,12 +139,17 @@ class VideoSectionApp:
         self.progress_bar.pack(pady=20)
 
 
-        self.progress_window.after(100, lambda: video_pipeline.run(source=self.video_file,
+        def processing_thread():
+            self.progress_window.after(100, lambda: video_pipeline.run(source=self.video_file,
                            save_img=True,
                            frame_callback=self.progress_callback,
                            dst=self.output_directory,
                            start_frame=self.sections[0][1][0],
                            end_frame=self.sections[0][1][1]))
+            self.progress_window.destroy()
+
+        t = threading.Thread(target=processing_thread)
+        t.start()
 
     def open_file(self):
         # Open a dialog to choose an .mp4 file
