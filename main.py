@@ -138,14 +138,13 @@ class VideoSectionApp:
         self.progress_bar = ttk.Progressbar(self.progress_window, mode="determinate")
         self.progress_bar.pack(pady=20)
 
-
         def processing_thread():
-            self.progress_window.after(100, lambda: video_pipeline.run(source=self.video_file,
+            video_pipeline.run(source=self.video_file,
                            save_img=True,
                            frame_callback=self.progress_callback,
                            dst=self.output_directory,
                            start_frame=self.sections[0][1][0],
-                           end_frame=self.sections[0][1][1]))
+                           end_frame=self.sections[0][1][1])
             self.progress_window.destroy()
 
         t = threading.Thread(target=processing_thread)
