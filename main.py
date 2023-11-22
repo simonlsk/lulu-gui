@@ -127,8 +127,23 @@ class VideoSectionApp:
             messagebox.showwarning("No Video", "No video file has been selected.")
             return
         # Process sections (placeholder for actual processing)
-        messagebox.showinfo("Processing", f"The following sections will be processed: \n{self.sections}")
-        video_pipeline.run(source=self.video_file, save_img=True)
+        # messagebox.showinfo("Processing", f"The following sections will be processed: \n{self.sections}")
+
+        # Create a custom progress dialog window
+        self.progress_window = tk.Toplevel(self.root)
+        self.progress_window.title("Processing...")
+        self.progress_window.geometry("300x100")
+
+        # Create a progress bar
+        self.progress_bar = tk.Progressbar(progress_window, mode="determinate")
+        self.progress_bar.pack(pady=20)
+
+        self.progress_window.after(100, lambda: video_pipeline.run(source=self.video_file,
+                           save_img=True,
+                           frame_callback=self.progress_callback,
+                           dst=self.output_directory,
+                           start_frame=self.sections[0][1][0],
+                           end_frame=self.sections[0][1][1]))
 
     def open_file(self):
         # Open a dialog to choose an .mp4 file
@@ -214,7 +229,8 @@ class VideoSectionApp:
             self.directory_path_entry.insert(0, self.output_directory)  # Fill the text field
 
     def progress_callback(self, percent):
-        pass
+        self.progress_bar["value"] = percent
+        self.progress_window.update_idletasks()
 
 root = tk.Tk()
 app = VideoSectionApp(root)

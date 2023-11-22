@@ -102,7 +102,7 @@ def run(weights='yolov8n.pt',
             break
 
         if frame_callback is not None:
-            frame_callback(frame_idx)
+            frame_callback(frame_idx / (end_frame-start_frame))
         frame_idx += 1
 
     video_writer.release()
