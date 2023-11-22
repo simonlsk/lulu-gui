@@ -1,3 +1,4 @@
+import math
 import tkinter as tk
 
 
@@ -18,6 +19,7 @@ class CustomSlider(tk.Canvas):
         self.position = 0
         self.cursor_handle = None
         self.timecode_text = None
+        self.frame_number = None
         self.bind_all("<Left>", self.move_left)  # Bind to all instances of the application
         self.bind_all("<Right>", self.move_right)  # Bind to all instances of the application
 
@@ -70,12 +72,67 @@ class CustomSlider(tk.Canvas):
     #     self.coords(self.end_handle, end_x - self.HANDLE_RADIUS, 20, end_x + self.HANDLE_RADIUS, 30)
 
     def get_smpte_timecode(self, frames):
-        # Convert frame number to SMPTE timecode
-        hours = frames // (3600 * self.framerate)
-        minutes = (frames // (60 * self.framerate)) % 60
-        seconds = (frames // self.framerate) % 60
-        frame_number = frames % self.framerate
-        return f"{hours:02}:{minutes:02}:{seconds:02}:{frame_number:02}"
+        # Calculate hours, minutes, seconds, and frames
+        # hours = frames // (3600 * self.framerate)
+        # minutes = (frames // (60 * self.framerate)) % 60
+        # seconds = (frames // self.framerate) % 60
+
+        if self.framerate in (30, 60, 120):
+            return self.calculate_integer_framerate_timecode(frames, self.framerate)
+        elif self.framerate == 29.97:
+            return self.calculate_drop_frame_timecode(frames, self.framerate, 30, 2)
+        elif self.framerate == 59.94:
+            return self.calculate_drop_frame_timecode(frames, self.framerate, 60, 4)
+        else:
+            return self.calculate_pseudo_drop_frame_timecode(frames, self.framerate)
+
+        # Calculate drop-frame frame number
+        # drop_frame_frames = int(frames - (frames // (self.framerate * 30)) * 2)
+
+        # Calculate the frame number adjusted for drop-frame timecode
+        # adjusted_frame_number = drop_frame_frames % self.framerate
+
+        # Format and apply drop-frame rules
+        # if adjusted_frame_number < 2:
+        #     adjusted_frame_number = 2
+
+        # return f"{hours:02}:{minutes:02}:{seconds:02};{adjusted_frame_number:02}"
+
+    @staticmethod
+    def calculate_integer_framerate_timecode(frame_number, framerate):
+        # Calculate hours, minutes, seconds, and frames
+        hours = frame_number // (3600 * framerate)
+        minutes = (frame_number // (60 * framerate)) % 60
+        seconds = (frame_number // framerate) % 60
+        frame_number = frame_number % framerate
+
+        return f"{hours:02d}:{minutes:02d}:{seconds:02d}:{frame_number:02d}"
+
+    @staticmethod
+    def calculate_drop_frame_timecode(frame_number, framerate, ceil_framerate, drop_frame_size):
+        # Calculate hours, minutes, seconds, and frames
+        hours = int(frame_number // (3600 * framerate))
+        minutes = int((frame_number // (60 * framerate)) % 60)
+        seconds = int((frame_number // framerate) % 60)
+        pseudo_frame_number = frame_number + drop_frame_size * minutes - drop_frame_size * (minutes // 10)
+        frame_number = pseudo_frame_number % ceil_framerate
+
+        return f"{hours:02d}:{minutes:02d}:{seconds:02d};{frame_number:02d}"
+
+    @staticmethod
+    def calculate_pseudo_drop_frame_timecode(frame_number, framerate):
+        # Calculate hours, minutes, seconds, and frames
+        hours = int(frame_number // (3600 * framerate))
+        minutes = int((frame_number // (60 * framerate)) % 60)
+        seconds = int((frame_number // framerate) % 60)
+        millis_per_frame = 1000 / framerate
+        milliseconds = int((frame_number % framerate) * millis_per_frame)
+        pseudo_frame_rate = math.ceil(framerate)
+        pseudo_millis_per_frame = 1000 / pseudo_frame_rate
+        # calculate relative frame based on millisecond count
+        display_frame = int(milliseconds / pseudo_millis_per_frame)
+
+        return f"{hours:02}:{minutes:02}:{seconds:02};{display_frame:02}"
 
     def get_smpte(self):
         # Get SMPTE timecode for start position
