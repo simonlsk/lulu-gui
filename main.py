@@ -183,7 +183,11 @@ class VideoSectionApp:
         # Check if the frame was read successfully
         if ret:
             # Convert the frame data to a PhotoImage object for tkinter
-            frame_image = ImageTk.PhotoImage(Image.fromarray(cv2.cvtColor(frame_data, cv2.COLOR_BGR2RGB)))
+            img = Image.fromarray(cv2.cvtColor(frame_data, cv2.COLOR_BGR2RGB))
+            width = self.root.winfo_width() - 10
+            height = width * img.height // img.width
+            img = img.resize((width, height))
+            frame_image = ImageTk.PhotoImage(img)
             self.video_display.config(image=frame_image)
             self.video_display.image = frame_image  # Keep a reference to prevent garbage collection
 

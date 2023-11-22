@@ -143,10 +143,12 @@ class CustomSlider(tk.Canvas):
     def move_left(self, event):
         if self.position > 0:
             self.set_position(self.position - 1)  # Move left by one frame
+        self.handle_cursor_motion(event)
 
     def move_right(self, event):
         if self.position < self.length:
             self.set_position(self.position + 1)  # Move right by one frame
+        self.handle_cursor_motion(event)
 
     def set_position(self, frame):
         self.position = frame
