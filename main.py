@@ -1,6 +1,5 @@
 import tkinter as tk
-from tkinter import filedialog
-from tkinter import messagebox
+from tkinter import filedialog, messagebox, ttk
 import cv2
 from PIL import ImageTk, Image
 import video_pipeline
@@ -135,8 +134,9 @@ class VideoSectionApp:
         self.progress_window.geometry("300x100")
 
         # Create a progress bar
-        self.progress_bar = tk.Progressbar(progress_window, mode="determinate")
+        self.progress_bar = ttk.Progressbar(self.progress_window, mode="determinate")
         self.progress_bar.pack(pady=20)
+
 
         self.progress_window.after(100, lambda: video_pipeline.run(source=self.video_file,
                            save_img=True,
@@ -229,7 +229,7 @@ class VideoSectionApp:
             self.directory_path_entry.insert(0, self.output_directory)  # Fill the text field
 
     def progress_callback(self, percent):
-        self.progress_bar["value"] = percent
+        self.progress_bar["value"] = percent * 100
         self.progress_window.update_idletasks()
 
 root = tk.Tk()

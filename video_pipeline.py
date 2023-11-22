@@ -47,9 +47,9 @@ def run(weights='yolov8n.pt',
     fps, fourcc = int(videocapture.get(5)), cv2.VideoWriter_fourcc(*'mp4v')
 
     # Output setup
-    save_dir = increment_path(Path(dst), exist_ok)
-    save_dir.mkdir(parents=True, exist_ok=True)
-    save_file = increment_path(save_dir / f'{Path(source).stem}_{start_frame}_{end_frame}.mp4')
+    # save_dir = increment_path(Path(dst), exist_ok)
+    # save_dir.mkdir(parents=True, exist_ok=True)
+    save_file = increment_path(Path(dst) / f'{Path(source).stem}_{start_frame}_{end_frame}.mp4')
     video_writer = cv2.VideoWriter(str(save_file), fourcc, fps, (frame_width, frame_height))
 
     frame_idx = 0
@@ -98,7 +98,7 @@ def run(weights='yolov8n.pt',
         if cv2.waitKey(1) & 0xFF == ord('q'):
             break
 
-        if frame_idx == end_frame:
+        if frame_idx+start_frame == end_frame:
             break
 
         if frame_callback is not None:
