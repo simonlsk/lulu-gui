@@ -96,12 +96,12 @@ class CustomSlider(tk.Canvas):
     @staticmethod
     def calculate_integer_framerate_timecode(frame_number, framerate):
         # Calculate hours, minutes, seconds, and frames
-        hours = frame_number // (3600 * framerate)
-        minutes = (frame_number // (60 * framerate)) % 60
-        seconds = (frame_number // framerate) % 60
-        frame_number = frame_number % framerate
+        hours = int(frame_number // (3600 * framerate))
+        minutes = int((frame_number // (60 * framerate)) % 60)
+        seconds = int((frame_number // framerate) % 60)
+        frame_number = int(frame_number % framerate)
 
-        return f"{hours:02d}:{minutes:02d}:{seconds:02d}:{frame_number:02d}"
+        return f"{hours:02}:{minutes:02}:{seconds:02}:{frame_number:02}"
 
     @staticmethod
     def calculate_drop_frame_timecode(frame_number, framerate, ceil_framerate, drop_frame_size):
@@ -112,7 +112,7 @@ class CustomSlider(tk.Canvas):
         pseudo_frame_number = frame_number + drop_frame_size * minutes - drop_frame_size * (minutes // 10)
         frame_number = pseudo_frame_number % ceil_framerate
 
-        return f"{hours:02d}:{minutes:02d}:{seconds:02d};{frame_number:02d}"
+        return f"{hours:02}:{minutes:02}:{seconds:02};{frame_number:02}"
 
     @staticmethod
     def calculate_pseudo_drop_frame_timecode(frame_number, framerate):
