@@ -8,7 +8,7 @@ class CustomSlider(tk.Canvas):
     PAD_X = 20
     TEXT_PAD_Y = 20
 
-    def __init__(self, parent, total_frames, framerate, **kwargs):
+    def __init__(self, parent, total_frames, framerate, video_callback=None, **kwargs):
         tk.Canvas.__init__(self, parent, **kwargs)
         self.config(height=50)
         self.bind("<Configure>", self.on_resize)
@@ -22,6 +22,12 @@ class CustomSlider(tk.Canvas):
         self.frame_number = None
         self.bind_all("<Left>", self.move_left)  # Bind to all instances of the application
         self.bind_all("<Right>", self.move_right)  # Bind to all instances of the application
+        if video_callback:
+            self.video_callback = video_callback
+            self.bind("<Motion>", self.handle_cursor_motion)
+
+    def handle_cursor_motion(self, event):
+        self.video_callback(self.position)
 
     def on_resize(self, event):
         self.config(width=event.width)
@@ -59,17 +65,6 @@ class CustomSlider(tk.Canvas):
         range_width = self.winfo_width() - 2 * self.PAD_X
         return int(frames / self.length * range_width + self.PAD_X)
 
-    # def set_start(self, frames):
-    #     # Set the start position handle based on frames
-    #     self.start_position = frames
-    #     start_x = self.frames_to_position(frames)
-    #     self.coords(self.start_handle, start_x - self.HANDLE_RADIUS, 20, start_x + self.HANDLE_RADIUS, 30)
-    #
-    # def set_end(self, frames):
-    #     # Set the end position handle based on frames
-    #     self.end_position = frames
-    #     end_x = self.frames_to_position(frames)
-    #     self.coords(self.end_handle, end_x - self.HANDLE_RADIUS, 20, end_x + self.HANDLE_RADIUS, 30)
 
     def get_smpte_timecode(self, frames):
         # Calculate hours, minutes, seconds, and frames

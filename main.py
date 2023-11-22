@@ -2,6 +2,8 @@ import tkinter as tk
 from tkinter import filedialog
 from tkinter import messagebox
 import cv2
+from PIL import ImageTk, Image
+
 from slider import CustomSlider
 
 
@@ -15,6 +17,7 @@ class VideoSectionApp:
         self.current_end = None
         self.video_length = None
         self.framerate = None
+        self.cap = None
 
     def setup_ui(self):
         # Set window title and size
@@ -33,22 +36,16 @@ class VideoSectionApp:
         self.open_file_button = tk.Button(input_frame, text="Open Video File", command=self.open_file)
         self.open_file_button.pack(side='right')
 
-        # Start and End Time Entries
-        # self.start_time_entry = tk.Entry(input_frame, width=10)
-        # self.start_time_entry.pack(side="left", padx=(0, 10))
-        # self.end_time_entry = tk.Entry(input_frame, width=10)
-        # self.end_time_entry.pack(side="left")
-
-        # Add Section Button
-        # add_section_button = tk.Button(input_frame, text="Add section", command=self.add_section)
-        # add_section_button.pack(side="left", padx=10)
+        # Video Display
+        self.video_display = tk.Label(self.root)
+        self.video_display.pack(padx=10, pady=10)
 
         # Custom Slider Frame
         self.slider_frame = tk.Frame(self.root)
         self.slider_frame.pack(fill="x", padx=20, pady=10)
 
         # Custom Slider
-        self.slider = CustomSlider(self.slider_frame, 1000, 30)
+        self.slider = CustomSlider(self.slider_frame, 1000, 30, self.update_video_display)
         self.slider.pack(fill="x", expand=True)
 
         # Add buttons for setting start and end points
@@ -126,6 +123,10 @@ class VideoSectionApp:
             filetypes=[("MP4 files", "*.mp4")],
             defaultextension=".mp4"
         )
+        if self.cap is not None:
+            self.cap.release()
+            self.cap = None
+
         # If a file is selected, update the entry with the file path
         if file_path:
             self.file_path_entry.delete(0, tk.END)
@@ -135,6 +136,9 @@ class VideoSectionApp:
             # self.load_video(file_path)  # Load the video using the previously defined method
             self.video_length, self.framerate = self.get_video_info(file_path)
             self.reset_slider()
+            # Open the video file using OpenCV
+            self.cap = cv2.VideoCapture(self.video_file)
+
 
     def delete_element(self, arg):
         selected_indices = self.sections_listbox.curselection()
@@ -164,6 +168,25 @@ class VideoSectionApp:
         # Release the video capture object
         cap.release()
         return total_frames, framerate
+
+    def update_video_display(self, frame):
+        cap = self.cap
+        if cap is None:
+            return
+
+        # Set the video capture to the specified frame
+        cap.set(cv2.CAP_PROP_POS_FRAMES, frame)
+
+        # Read the frame from the video capture
+        ret, frame_data = cap.read()
+
+        # Check if the frame was read successfully
+        if ret:
+            # Convert the frame data to a PhotoImage object for tkinter
+            frame_image = ImageTk.PhotoImage(Image.fromarray(cv2.cvtColor(frame_data, cv2.COLOR_BGR2RGB)))
+            self.video_display.config(image=frame_image)
+            self.video_display.image = frame_image  # Keep a reference to prevent garbage collection
+
 
 root = tk.Tk()
 app = VideoSectionApp(root)
