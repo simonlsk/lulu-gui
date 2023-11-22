@@ -3,7 +3,7 @@ from tkinter import filedialog
 from tkinter import messagebox
 import cv2
 from PIL import ImageTk, Image
-
+import video_pipeline
 from slider import CustomSlider
 
 
@@ -97,14 +97,16 @@ class VideoSectionApp:
         print("Start timecode set to:", start_timecode)
 
     def set_end(self):
+        if self.current_start is None:
+            return
         # Record the end value from the slider
         end_timecode = self.slider.get_smpte()
         end_frame = self.slider.position
         # You can update the UI or internal state with this value
         self.current_end = end_timecode, end_frame
-        if self.current_end[1] > self.current_start[1]:
+        if self.current_end is not None and self.current_end[1] > self.current_start[1]:
             self.add_section()
-        print("End timecode set to:", end_timecode)
+            print("End timecode set to:", end_timecode)
 
     def add_section(self):
         start = self.current_start
@@ -126,6 +128,7 @@ class VideoSectionApp:
             return
         # Process sections (placeholder for actual processing)
         messagebox.showinfo("Processing", f"The following sections will be processed: \n{self.sections}")
+        video_pipeline.run(source=self.video_file, save_img=True)
 
     def open_file(self):
         # Open a dialog to choose an .mp4 file
@@ -210,6 +213,8 @@ class VideoSectionApp:
             self.directory_path_entry.delete(0, tk.END)  # Clear any existing text
             self.directory_path_entry.insert(0, self.output_directory)  # Fill the text field
 
+    def progress_callback(self, percent):
+        pass
 
 root = tk.Tk()
 app = VideoSectionApp(root)
