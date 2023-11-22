@@ -22,7 +22,7 @@ class VideoSectionApp:
     def setup_ui(self):
         # Set window title and size
         self.root.title("Video Section Selector")
-        self.root.geometry("480x480")
+        self.root.geometry("480x700")
 
         # Input Frame
         input_frame = tk.LabelFrame(self.root, text="Input", padx=10, pady=10)
@@ -60,11 +60,22 @@ class VideoSectionApp:
         section_list_frame.pack(padx=10, pady=5, fill="both", expand=True)
 
         # Sections Listbox
-        self.sections_listbox = tk.Listbox(section_list_frame)
+        self.sections_listbox = tk.Listbox(section_list_frame, height=5)
         self.sections_listbox.pack(padx=5, pady=5, fill="both", expand=True)
 
         # Bind delete key
         self.sections_listbox.bind_all("<BackSpace>", self.delete_element)
+
+        # Output location
+        # Input Frame
+        output_frame = tk.LabelFrame(self.root, text="Output", padx=10, pady=10)
+        output_frame.pack(padx=10, pady=5, fill="x")
+        self.directory_path_entry = tk.Entry(output_frame)
+        self.directory_path_entry.pack(side='left', expand=True, padx=(0, 5), fill='x')
+
+        # Open Directory Button
+        self.open_directory_button = tk.Button(output_frame, text="Select Output Directory", command=self.select_output_directory)
+        self.open_directory_button.pack(side='right')
 
         # Process Button
         process_button = tk.Button(self.root, text="Process", command=self.process_sections)
@@ -190,6 +201,14 @@ class VideoSectionApp:
             frame_image = ImageTk.PhotoImage(img)
             self.video_display.config(image=frame_image)
             self.video_display.image = frame_image  # Keep a reference to prevent garbage collection
+
+    def select_output_directory(self):
+        # Open a file dialog to select the output directory
+        selected_directory = filedialog.askdirectory()
+        if selected_directory:
+            self.output_directory = selected_directory
+            self.directory_path_entry.delete(0, tk.END)  # Clear any existing text
+            self.directory_path_entry.insert(0, self.output_directory)  # Fill the text field
 
 
 root = tk.Tk()
