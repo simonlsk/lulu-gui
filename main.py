@@ -255,5 +255,9 @@ class VideoSectionApp:
         self.progress_window.update_idletasks()
 
 root = tk.Tk()
+ico = Image.open('icon.ico')
+photo = ImageTk.PhotoImage(ico)
+root.wm_iconphoto(False, photo)
+# root.iconbitmap("icon.ico")
 app = VideoSectionApp(root)
 root.mainloop()
