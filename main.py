@@ -81,6 +81,15 @@ class VideoSectionApp:
         process_button = tk.Button(self.root, text="Process", command=self.process_sections)
         process_button.pack(pady=5)
 
+        self.root.bind_all("<Key-i>", self.in_out_event)
+        self.root.bind_all("<Key-o>", self.in_out_event)
+
+    def in_out_event(self, event):
+        if event.char == "i":
+            self.set_start()
+        elif event.char == "o":
+            self.set_end()
+
     def set_start(self):
         # Record the start value from the slider
         start_timecode = self.slider.get_smpte()

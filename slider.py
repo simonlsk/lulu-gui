@@ -24,7 +24,7 @@ class CustomSlider(tk.Canvas):
         self.bind_all("<Right>", self.move_right)  # Bind to all instances of the application
         if video_callback:
             self.video_callback = video_callback
-            self.bind("<Motion>", self.handle_cursor_motion)
+            self.bind("<ButtonRelease-1>", self.handle_cursor_motion)
 
     def handle_cursor_motion(self, event):
         self.video_callback(self.position)
